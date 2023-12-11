@@ -1,38 +1,64 @@
 import "./App.css";
 
 import "./theme.css";
-import { useState } from "react";
+import { useReducer } from "react";
 
 function App() {
-  let [name, changeName] = useState("Amira Ali");
-  let [age, setAge] = useState(0);
-  const changeAge = () => {
-    setAge(age++);
+  let initialData = {
+    name: "Amira",
+    age: 0,
+    mode: "light",
+    count: 0,
   };
 
-  let [theme, setTheme] = useState("light");
+  const reducer = (state, action) => {
+    switch (action.type) {
+      case "changeName":
+        return { ...state, name: action.new_name };
+      case "changeAge":
+        return { ...state, age: action.new_age };
+      case "changeMode":
+        return { ...state, mode: action.new_mode };
+      case "increase":
+        return { ...state, count: action.new_count };
+      case "toggle":
+        return { ...state, mode: action.new_mode };
+      default:
+        return state;
+    }
+  };
 
-  function toggle() {
-    setTheme(theme == "dark" ? (theme = "light") : (theme = "dark"));
-  }
+  let [value, setValue] = useReducer(reducer, initialData);
+
   return (
-    <div className={`App ${theme}`}>
-      <button onClick={toggle}>Toggle</button>
+    <div className={`App ${value.mode}`}>
+      <button
+        onClick={() => {
+          setValue({
+            type: "toggle",
+            new_mode: value.mode == "light" ? "dark" : "light",
+          });
+        }}
+      >
+        Toggle
+      </button>
 
-      {/* switch */}
+      {/********* * switch mode****************/}
 
       <div className="btn-container">
         <i className="fa fa-sun-o" aria-hidden="true" />
         <label className="switch btn-color-mode-switch">
           <input
-            onClick={() => {
-              toggle()
-            }}
             type="checkbox"
             name="color_mode"
             id="color_mode"
             defaultValue={1}
-            
+            onClick={() => {
+              setValue({
+                type: "toggle",
+                new_mode: value.mode == "light" ? "dark" : "light",
+              });
+            }}
           />
           <label
             htmlFor="color_mode"
@@ -47,29 +73,43 @@ function App() {
       <div className="modes">
         <button
           onClick={() => {
-            setTheme("dark");
+            setValue({ type: "changeMode", new_mode: "dark" });
           }}
         >
           dark
         </button>
         <button
           onClick={() => {
-            setTheme("light");
+            setValue({ type: "changeMode", new_mode: "light" });
           }}
         >
           light
         </button>
       </div>
-      <h2>My Name Is : {name}</h2>
+      <h2>My Name Is : {value.name}</h2>
       <button
         onClick={() => {
-          changeName("Meroo Ali ❤");
+          setValue({ type: "changeName", new_name: "Hello Meroo❤👌" });
         }}
       >
-        Change Name
+        Change Name{" "}
       </button>
-      <h2>My Age Is : {age}</h2>
-      <button onClick={changeAge}>Change Age</button>
+      <h2>My Age Is : {value.age}</h2>
+      <button
+        onClick={() => {
+          setValue({ type: "changeAge", new_age: 22 });
+        }}
+      >
+        Change Age
+      </button>
+
+      <button
+        onClick={() => {
+          setValue({ type: "increase", new_count: value.count + 1 });
+        }}
+      >
+        Change Count {value.count}
+      </button>
     </div>
   );
 }
