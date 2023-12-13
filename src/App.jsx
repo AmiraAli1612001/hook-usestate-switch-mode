@@ -1,43 +1,29 @@
 import "./App.css";
 
 import "./theme.css";
-import { useReducer } from "react";
+
+import { useContext } from "react";
+import ThemeProvider from "./context/contextdata";
+import { Link } from "react-router-dom";
 
 function App() {
-  let initialData = {
-    name: "Amira",
-    age: 0,
-    mode: "light",
-    count: 0,
-  };
-
-  const reducer = (state, action) => {
-    switch (action.type) {
-      case "changeName":
-        return { ...state, name: action.new_name };
-      case "changeAge":
-        return { ...state, age: action.new_age };
-      case "changeMode":
-        return { ...state, mode: action.new_mode };
-      case "increase":
-        return { ...state, count: action.new_count };
-      case "toggle":
-        return { ...state, mode: action.new_mode };
-      default:
-        return state;
-    }
-  };
-
-  let [value, setValue] = useReducer(reducer, initialData);
+  let {
+    name,
+    changeName,
+    changeCount,
+    count,
+    changeAge,
+    age,
+    toggle,
+    mode,
+  } = useContext(ThemeProvider);
 
   return (
-    <div className={`App ${value.mode}`}>
+    <div className={`App ${mode}`}>
+      <Link to="/about">About</Link>
       <button
         onClick={() => {
-          setValue({
-            type: "toggle",
-            new_mode: value.mode == "light" ? "dark" : "light",
-          });
+          toggle(mode == "light" ? "dark" : "light");
         }}
       >
         Toggle
@@ -54,10 +40,7 @@ function App() {
             id="color_mode"
             defaultValue={1}
             onClick={() => {
-              setValue({
-                type: "toggle",
-                new_mode: value.mode == "light" ? "dark" : "light",
-              });
+              toggle(mode == "light" ? "dark" : "light");
             }}
           />
           <label
@@ -73,31 +56,33 @@ function App() {
       <div className="modes">
         <button
           onClick={() => {
-            setValue({ type: "changeMode", new_mode: "dark" });
+            toggle("dark");
           }}
         >
           dark
         </button>
         <button
           onClick={() => {
-            setValue({ type: "changeMode", new_mode: "light" });
+            toggle("light");
           }}
         >
           light
         </button>
       </div>
-      <h2>My Name Is : {value.name}</h2>
+      <h2>My Name Is : {name} </h2>
+      {
+        <button
+          onClick={() => {
+            changeName();
+          }}
+        >
+          Change Name{" "}
+        </button>
+      }
+      <h2>My Age Is : {age} </h2>
       <button
         onClick={() => {
-          setValue({ type: "changeName", new_name: "Hello Meroo❤👌" });
-        }}
-      >
-        Change Name{" "}
-      </button>
-      <h2>My Age Is : {value.age}</h2>
-      <button
-        onClick={() => {
-          setValue({ type: "changeAge", new_age: 22 });
+          changeAge();
         }}
       >
         Change Age
@@ -105,10 +90,10 @@ function App() {
 
       <button
         onClick={() => {
-          setValue({ type: "increase", new_count: value.count + 1 });
+          changeCount();
         }}
       >
-        Change Count {value.count}
+        Change Count {count}
       </button>
     </div>
   );
