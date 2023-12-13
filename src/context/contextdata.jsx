@@ -5,7 +5,10 @@ const context = createContext();
 let initialData = {
   name: "Amira",
   age: 0,
-  mode: "light",
+  mode:
+    localStorage.getItem("theme") == null
+      ? "light"
+      : localStorage.getItem("theme"),
   count: 0,
 };
 
@@ -38,6 +41,7 @@ export function ThemeProvider({ children }) {
     setValue({ type: "changeAge", new_age: 23 });
   };
   const toggle = (theme) => {
+    localStorage.setItem("theme", theme);
     setValue({ type: "toggle", new_mode: theme });
   };
 
